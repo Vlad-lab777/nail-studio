@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { api, type ApiService, type ApiReview } from '../lib/api'
 import { SERVICE_IMAGES } from '../lib/serviceImages'
 
@@ -84,9 +84,6 @@ export function HomePage() {
   const featuredServices = services.slice(0, 3)
   const recentReviews = [...reviews].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 3)
 
-  const { scrollY } = useScroll()
-  const heroTextOpacity = useTransform(scrollY, [0, 300], [1, 0])
-
   return (
     <div className="min-h-screen bg-rose-50 text-stone-800">
       {/* ─── HERO ─── */}
@@ -100,7 +97,7 @@ export function HomePage() {
 
             {/* Left — text */}
             <div className="flex-1 min-w-0 order-2 lg:order-1">
-              <motion.div style={{ opacity: heroTextOpacity }}>
+              <motion.div>
                 <motion.div {...fadeUp(0.1)} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-100 border border-rose-200 text-rose-600 text-xs font-semibold mb-5">
                   <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
                   Манікюрна студія · Київ
