@@ -103,7 +103,7 @@ export function HomePage() {
                   Манікюрна студія · Київ
                 </motion.div>
 
-                <motion.h1 {...fadeUp(0.2)} className="text-5xl sm:text-6xl font-extrabold text-stone-800 leading-tight tracking-tight mb-5">
+                <motion.h1 {...fadeUp(0.2)} className="font-marck text-5xl sm:text-6xl font-extrabold text-stone-800 leading-[1.1] tracking-tight mb-5">
                   Манікюр, що{' '}
                   <span className="bg-gradient-to-r from-rose-500 to-pink-600 bg-clip-text text-transparent">говорить за вас</span>
                 </motion.h1>
