@@ -11,7 +11,7 @@ function BrandMark() {
 
 export function Footer() {
   return (
-    <footer id="contacts" className="bg-rose-50 border-t border-rose-100 py-12 mt-20 scroll-mt-20">
+    <footer id="contacts" className="bg-rose-50 border-t border-rose-100 py-12 scroll-mt-20">
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
           {/* Brand */}

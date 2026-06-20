@@ -39,12 +39,30 @@ const PERKS = [
 ]
 
 const SERVICE_CARDS = [
-  { serviceId: 's1', label: 'Манікюр', priceLabel: 'від 600 грн', img: SERVICE_IMAGES.s1 },
-  { serviceId: 's2', label: 'Манікюр + гель-лак', priceLabel: 'від 900 грн', img: SERVICE_IMAGES.s2 },
-  { serviceId: 's5', label: 'Нарощування нігтів', priceLabel: 'від 1300 грн', img: SERVICE_IMAGES.s5 },
-  { serviceId: 's4', label: 'Педикюр', priceLabel: 'від 1100 грн', img: SERVICE_IMAGES.s4 },
-  { serviceId: 's6', label: 'Дизайн нігтів', priceLabel: 'від 700 грн', img: SERVICE_IMAGES.s6 },
-  { serviceId: 's8', label: 'SPA догляд', priceLabel: 'від 500 грн', img: SERVICE_IMAGES.s8 },
+  {
+    serviceId: 's1', label: 'Манікюр', priceLabel: 'від 600 грн', duration: '1г 30хв', img: SERVICE_IMAGES.s1,
+    description: 'Класичний або апаратний манікюр з доглядовим кремом',
+  },
+  {
+    serviceId: 's2', label: 'Манікюр + гель-лак', priceLabel: 'від 900 грн', duration: '2г', img: SERVICE_IMAGES.s2,
+    description: 'Манікюр з покриттям гель-лаком, тримається до 3 тижнів',
+  },
+  {
+    serviceId: 's5', label: 'Нарощування нігтів', priceLabel: 'від 1300 грн', duration: '2г 30хв', img: SERVICE_IMAGES.s5,
+    description: 'Нарощування гелем або акрилом, будь-яка форма та довжина',
+  },
+  {
+    serviceId: 's4', label: 'Педикюр', priceLabel: 'від 1100 грн', duration: '1г 30хв', img: SERVICE_IMAGES.s4,
+    description: 'Класичний педикюр з доглядовою програмою для ніг',
+  },
+  {
+    serviceId: 's6', label: 'Дизайн нігтів', priceLabel: 'від 700 грн', duration: '30хв', img: SERVICE_IMAGES.s6,
+    description: 'Авторський дизайн, втирки, стрази, художній розпис',
+  },
+  {
+    serviceId: 's8', label: 'SPA догляд', priceLabel: 'від 500 грн', duration: '45хв', img: SERVICE_IMAGES.s8,
+    description: 'Пілінг, маска та парафінотерапія для рук',
+  },
 ]
 
 const G = 'https://images.pexels.com/photos'
@@ -80,6 +98,21 @@ const PROMOTIONS = [
     badge: null, title: 'День народження', desc: 'Знижка 15% у свій день народження',
     icon: <><circle cx="12" cy="7" r="1.3" fill="currentColor" stroke="none"/><path d="M12 13.5V9"/><path d="M20 21v-7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7"/><path d="M4 21h16"/><path d="M6 17c1-1 2-1 3 0s2 1 3 0 2-1 3 0 2 1 3 0"/></>,
   },
+]
+
+const ABOUT_PHOTO = `${G}/6899550/pexels-photo-6899550.jpeg?auto=compress&cs=tinysrgb&w=700&h=600&fit=crop`
+
+const STATS = [
+  { value: '5', label: 'років роботи' },
+  { value: '1200+', label: 'щасливих клієнток' },
+  { value: '100+', label: 'відтінків гель-лаків' },
+  { value: '4.9★', label: 'рейтинг салону' },
+]
+
+const REVIEWS_SHOWCASE = [
+  { text: 'Найкращий манікюр у місті! Тримається більше місяця і завжди ідеально виглядає.', author: 'Олена К.' },
+  { text: 'Дуже атмосферний салон та професійні майстри. Завжди задоволена результатом.', author: 'Ірина М.' },
+  { text: 'Після першого візиту стала постійною клієнткою. Рекомендую всім!', author: 'Катерина Л.' },
 ]
 
 export function HomePage() {
@@ -169,19 +202,27 @@ export function HomePage() {
           </motion.div>
 
           <div className="flex gap-5 overflow-x-auto scrollbar-hide pb-2">
-            {SERVICE_CARDS.map(({ serviceId, label, priceLabel, img }, i) => (
-              <motion.button
+            {SERVICE_CARDS.map(({ serviceId, label, priceLabel, duration, description, img }, i) => (
+              <motion.div
                 key={serviceId}
                 {...fadeUpInView(i * 0.05)}
-                onClick={() => navigate('/booking', { state: { serviceId } })}
-                className="shrink-0 w-[200px] sm:w-[220px] text-left group"
+                className="shrink-0 w-[230px] sm:w-[250px] text-left group"
               >
                 <div className="aspect-square rounded-2xl overflow-hidden mb-3">
                   <img src={img} alt={label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
                 <p className="font-semibold text-stone-800 text-sm mb-1">{label}</p>
-                <p className="text-xs text-stone-500">{priceLabel}</p>
-              </motion.button>
+                <p className="text-xs text-stone-500 leading-snug mb-3 line-clamp-2 min-h-[2.2em]">{description}</p>
+                <div className="flex items-end justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-base font-bold text-stone-800 whitespace-nowrap">{priceLabel}</p>
+                    <p className="text-[11px] text-stone-400">{duration}</p>
+                  </div>
+                  <button className="shrink-0 px-3 py-1.5 rounded-lg bg-gradient-to-r from-rose-400 to-pink-500 text-white text-xs font-semibold shadow-sm shadow-rose-300/40 hover:shadow-rose-300/60 transition-shadow whitespace-nowrap">
+                    Записатись
+                  </button>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -256,6 +297,75 @@ export function HomePage() {
                     {icon}
                   </svg>
                 </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── ABOUT SALON ─── */}
+      <section className="py-20 lg:py-24 bg-white/60">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex flex-col lg:flex-row items-center lg:items-start gap-10 lg:gap-16">
+
+            {/* Left — photo */}
+            <motion.div {...fadeUpInView()} className="flex-shrink-0 w-full lg:w-[460px]">
+              <div className="rounded-3xl overflow-hidden shadow-2xl shadow-rose-200/50 aspect-[4/5] lg:aspect-auto lg:h-96">
+                <img
+                  src={ABOUT_PHOTO}
+                  alt="Інтер'єр студії Lumière Nails"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </motion.div>
+
+            {/* Right — text + stats */}
+            <div className="flex-1 min-w-0">
+              <motion.div {...fadeUpInView(0.05)} className="flex items-center gap-4 mb-5">
+                <span className="w-1 h-8 rounded-full bg-gradient-to-b from-rose-400 to-pink-500 shrink-0" />
+                <h2 className="text-3xl font-bold text-stone-800">Про салон</h2>
+              </motion.div>
+
+              <motion.p {...fadeUpInView(0.1)} className="text-base text-stone-500 leading-relaxed mb-8 max-w-lg">
+                Lumière Nails — затишна студія в центрі Києва, де кожна деталь продумана для вашого
+                комфорту. Наші майстри використовують лише сертифіковані матеріали провідних брендів
+                і регулярно вдосконалюють навички. Тут ви не просто робите манікюр — ви проводите час для себе.
+              </motion.p>
+
+              <motion.div {...fadeUpInView(0.2)} className="grid grid-cols-4 gap-3 sm:gap-6 max-w-lg">
+                {STATS.map(({ value, label }) => (
+                  <div key={label} className="min-w-0">
+                    <p className="text-2xl sm:text-3xl font-extrabold text-rose-500 mb-1 whitespace-nowrap">{value}</p>
+                    <p className="text-[10px] sm:text-xs text-stone-500 leading-tight">{label}</p>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ─── REVIEWS ─── */}
+      <section className="py-20 lg:py-24">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div {...fadeUpInView()} className="flex items-center gap-4 mb-10">
+            <span className="w-1 h-8 rounded-full bg-gradient-to-b from-rose-400 to-pink-500 shrink-0" />
+            <h2 className="text-3xl font-bold text-stone-800">Відгуки наших клієнтів</h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {REVIEWS_SHOWCASE.map(({ text, author }, i) => (
+              <motion.div key={author} {...fadeUpInView(i * 0.08)} className="h-full bg-white rounded-2xl shadow-md shadow-rose-100/50 p-6">
+                <div className="flex gap-0.5 mb-4">
+                  {Array.from({ length: 5 }).map((_, j) => (
+                    <svg key={j} width="16" height="16" viewBox="0 0 24 24" fill="#F472B6">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-sm text-stone-600 leading-relaxed mb-5">{text}</p>
+                <p className="text-sm font-semibold text-stone-800">{author}</p>
               </motion.div>
             ))}
           </div>
