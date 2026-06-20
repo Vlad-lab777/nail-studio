@@ -39,10 +39,12 @@ const PERKS = [
 ]
 
 const SERVICE_CARDS = [
-  { serviceId: 's2', label: 'Манікюр', img: SERVICE_IMAGES.s2 },
-  { serviceId: 's4', label: 'Педикюр', img: SERVICE_IMAGES.s4 },
-  { serviceId: 's5', label: 'Нарощування', img: SERVICE_IMAGES.s5 },
-  { serviceId: 's6', label: 'Дизайн нігтів', img: SERVICE_IMAGES.s6 },
+  { serviceId: 's1', label: 'Манікюр', priceLabel: 'від 600 грн', img: SERVICE_IMAGES.s1 },
+  { serviceId: 's2', label: 'Манікюр + гель-лак', priceLabel: 'від 900 грн', img: SERVICE_IMAGES.s2 },
+  { serviceId: 's5', label: 'Нарощування нігтів', priceLabel: 'від 1300 грн', img: SERVICE_IMAGES.s5 },
+  { serviceId: 's4', label: 'Педикюр', priceLabel: 'від 1100 грн', img: SERVICE_IMAGES.s4 },
+  { serviceId: 's6', label: 'Дизайн нігтів', priceLabel: 'від 700 грн', img: SERVICE_IMAGES.s6 },
+  { serviceId: 's8', label: 'SPA догляд', priceLabel: 'від 500 грн', img: SERVICE_IMAGES.s8 },
 ]
 
 const G = 'https://images.pexels.com/photos'
@@ -136,24 +138,27 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ─── SERVICES (photo cards) ─── */}
+      {/* ─── SERVICES (horizontal scroll strip) ─── */}
       <section className="py-20 lg:py-24">
         <div className="max-w-6xl mx-auto px-4">
-          <motion.div {...fadeUpInView()} className="text-center mb-12">
-            <p className="text-xs font-semibold text-rose-500 uppercase tracking-widest mb-3">Послуги</p>
-            <h2 className="text-3xl font-bold text-stone-800">Що ми робимо найкраще</h2>
+          <motion.div {...fadeUpInView()} className="flex items-center gap-4 mb-10">
+            <span className="w-1 h-8 rounded-full bg-gradient-to-b from-rose-400 to-pink-500 shrink-0" />
+            <h2 className="text-3xl font-bold text-stone-800">Наші послуги</h2>
           </motion.div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {SERVICE_CARDS.map(({ serviceId, label, img }, i) => (
+
+          <div className="flex gap-5 overflow-x-auto scrollbar-hide pb-2">
+            {SERVICE_CARDS.map(({ serviceId, label, priceLabel, img }, i) => (
               <motion.button
                 key={serviceId}
-                {...fadeUpInView(i * 0.08)}
+                {...fadeUpInView(i * 0.05)}
                 onClick={() => navigate('/booking', { state: { serviceId } })}
-                className="relative aspect-[4/3] rounded-3xl overflow-hidden group text-left"
+                className="shrink-0 w-[200px] sm:w-[220px] text-left group"
               >
-                <img src={img} alt={label} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-                <span className="absolute bottom-5 left-5 text-xl font-bold text-white">{label}</span>
+                <div className="aspect-square rounded-2xl overflow-hidden mb-3">
+                  <img src={img} alt={label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                </div>
+                <p className="font-semibold text-stone-800 text-sm mb-1">{label}</p>
+                <p className="text-xs text-stone-500">{priceLabel}</p>
               </motion.button>
             ))}
           </div>
@@ -163,13 +168,14 @@ export function HomePage() {
       {/* ─── GALLERY ─── */}
       <section id="gallery" className="py-20 lg:py-24 bg-white/60 scroll-mt-20">
         <div className="max-w-6xl mx-auto px-4">
-          <motion.div {...fadeUpInView()} className="text-center mb-12">
-            <p className="text-xs font-semibold text-rose-500 uppercase tracking-widest mb-3">Галерея</p>
-            <h2 className="text-3xl font-bold text-stone-800">Наші роботи</h2>
+          <motion.div {...fadeUpInView()} className="flex items-center gap-4 mb-10">
+            <span className="w-1 h-8 rounded-full bg-gradient-to-b from-rose-400 to-pink-500 shrink-0" />
+            <h2 className="text-3xl font-bold text-stone-800">Галерея робіт</h2>
           </motion.div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+
+          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
             {GALLERY_IMAGES.map((src, i) => (
-              <motion.div key={src} {...fadeUpInView(i * 0.05)} className="aspect-square rounded-2xl overflow-hidden">
+              <motion.div key={src} {...fadeUpInView(i * 0.04)} className="shrink-0 w-[180px] sm:w-[220px] aspect-square rounded-2xl overflow-hidden">
                 <img
                   src={src}
                   alt={`Робота Lumière Nails ${i + 1}`}
