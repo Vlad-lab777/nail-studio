@@ -60,6 +60,28 @@ const GALLERY_IMAGES = [
   `${G}/7755652/pexels-photo-7755652.jpeg${GQ}`,
 ]
 
+const MQ = '?auto=compress&cs=tinysrgb&w=400&h=480&fit=crop'
+const MASTERS = [
+  { name: 'Анна', role: 'Senior Nail Artist', experience: 7, photo: `${G}/30004322/pexels-photo-30004322.jpeg${MQ}` },
+  { name: 'Марина', role: 'Top Master', experience: 6, photo: `${G}/3791554/pexels-photo-3791554.jpeg${MQ}` },
+  { name: 'Софія', role: 'Nail Designer', experience: 5, photo: `${G}/16152597/pexels-photo-16152597.jpeg${MQ}` },
+]
+
+const PROMOTIONS = [
+  {
+    badge: '-20%', title: 'На перший візит', desc: 'Знайомство з нашим салоном за приємною ціною',
+    icon: <><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1" fill="currentColor" stroke="none"/></>,
+  },
+  {
+    badge: null, title: 'Приведи подругу', desc: 'Отримай 300 грн бонусів на наступний візит',
+    icon: <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>,
+  },
+  {
+    badge: null, title: 'День народження', desc: 'Знижка 15% у свій день народження',
+    icon: <><circle cx="12" cy="7" r="1.3" fill="currentColor" stroke="none"/><path d="M12 13.5V9"/><path d="M20 21v-7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7"/><path d="M4 21h16"/><path d="M6 17c1-1 2-1 3 0s2 1 3 0 2-1 3 0 2 1 3 0"/></>,
+  },
+]
+
 export function HomePage() {
   const navigate = useNavigate()
 
@@ -181,6 +203,59 @@ export function HomePage() {
                   alt={`Робота Lumière Nails ${i + 1}`}
                   className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                 />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── MASTERS ─── */}
+      <section className="py-20 lg:py-24 bg-white/60">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div {...fadeUpInView()} className="flex items-center gap-4 mb-10">
+            <span className="w-1 h-8 rounded-full bg-gradient-to-b from-rose-400 to-pink-500 shrink-0" />
+            <h2 className="text-3xl font-bold text-stone-800">Наші майстри</h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {MASTERS.map(({ name, role, experience, photo }, i) => (
+              <motion.div key={name} {...fadeUpInView(i * 0.08)} className="h-full bg-white rounded-3xl overflow-hidden shadow-md shadow-rose-100/50">
+                <div className="aspect-[4/5] overflow-hidden">
+                  <img src={photo} alt={name} className="w-full h-full object-cover" />
+                </div>
+                <div className="p-5">
+                  <p className="font-semibold text-stone-800 text-lg mb-1">{name}</p>
+                  <p className="text-sm text-stone-500 mb-2">{role}</p>
+                  <p className="text-xs text-stone-400 mb-3">Досвід: {experience} років</p>
+                  <span className="text-sm font-semibold text-rose-500">Детальніше →</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── PROMOTIONS ─── */}
+      <section className="py-20 lg:py-24">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div {...fadeUpInView()} className="flex items-center gap-4 mb-10">
+            <span className="w-1 h-8 rounded-full bg-gradient-to-b from-rose-400 to-pink-500 shrink-0" />
+            <h2 className="text-3xl font-bold text-stone-800">Акції та спеціальні пропозиції</h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {PROMOTIONS.map(({ badge, title, desc, icon }, i) => (
+              <motion.div key={title} {...fadeUpInView(i * 0.08)} className="h-full flex items-start justify-between gap-4 bg-white rounded-2xl shadow-md shadow-rose-100/50 p-6">
+                <div className="min-w-0">
+                  {badge && <p className="text-3xl font-extrabold text-rose-500 leading-none mb-2">{badge}</p>}
+                  <p className={`font-semibold text-stone-800 mb-1.5 ${badge ? '' : 'text-lg'}`}>{title}</p>
+                  <p className="text-sm text-stone-500 leading-relaxed">{desc}</p>
+                </div>
+                <div className="shrink-0 w-11 h-11 rounded-full bg-rose-50 flex items-center justify-center text-rose-500">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    {icon}
+                  </svg>
+                </div>
               </motion.div>
             ))}
           </div>
