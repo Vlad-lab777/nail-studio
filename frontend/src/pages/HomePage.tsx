@@ -1,6 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { SERVICE_IMAGES } from '../lib/serviceImages'
+
+const HERO_INTRO_KEY = 'lumiere-hero-intro-played'
+const DOOR_EASE = [0.76, 0, 0.24, 1] as [number, number, number, number]
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
@@ -138,6 +141,37 @@ export function HomePage() {
   const [selectedService, setSelectedService] = useState('')
   const [openFaqs, setOpenFaqs] = useState<Set<number>>(new Set())
 
+  const [hasPlayedIntro] = useState(() => sessionStorage.getItem(HERO_INTRO_KEY) === 'true')
+  const [isDesktop] = useState(() => window.matchMedia('(min-width: 768px)').matches)
+  const [opened, setOpened] = useState(hasPlayedIntro)
+
+  useEffect(() => {
+    if (hasPlayedIntro) return
+    document.body.style.overflow = 'hidden'
+    const startTimer = setTimeout(() => {
+      setOpened(true)
+      sessionStorage.setItem(HERO_INTRO_KEY, 'true')
+    }, 350)
+    return () => {
+      clearTimeout(startTimer)
+      document.body.style.overflow = ''
+    }
+  }, [hasPlayedIntro])
+
+  useEffect(() => {
+    if (hasPlayedIntro || !opened) return
+    const unlockTimer = setTimeout(() => {
+      document.body.style.overflow = ''
+    }, isDesktop ? 1100 : 900)
+    return () => clearTimeout(unlockTimer)
+  }, [opened, hasPlayedIntro, isDesktop])
+
+  const heroDelays = hasPlayedIntro
+    ? [0.05, 0.15, 0.25, 0.35]
+    : isDesktop
+      ? [0.7, 0.85, 1.05, 1.2]
+      : [0.55, 0.68, 0.82, 0.95]
+
   const toggleFaq = (i: number) => {
     setOpenFaqs((prev) => {
       const next = new Set(prev)
@@ -154,26 +188,86 @@ export function HomePage() {
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-pink-200/40 blur-3xl" />
         <div className="absolute top-40 -left-24 w-80 h-80 rounded-full bg-amber-200/30 blur-3xl" />
 
+        {!hasPlayedIntro && (
+          <>
+            {/* Desktop door panels (horizontal split) */}
+            <motion.div
+              initial={false}
+              animate={{ x: opened ? '-100%' : 0 }}
+              transition={{ duration: 1.1, ease: DOOR_EASE }}
+              aria-hidden="true"
+              className="hidden md:flex absolute inset-y-0 left-0 w-1/2 z-40 items-center justify-center bg-gradient-to-br from-rose-950 to-stone-900"
+            >
+              <motion.span
+                animate={{ opacity: opened ? 0 : 1 }}
+                transition={{ duration: 0.45, ease: DOOR_EASE }}
+                className="text-2xl sm:text-3xl font-bold text-white tracking-wide"
+              >
+                ✦ Lumière
+              </motion.span>
+            </motion.div>
+            <motion.div
+              initial={false}
+              animate={{ x: opened ? '100%' : 0 }}
+              transition={{ duration: 1.1, ease: DOOR_EASE }}
+              aria-hidden="true"
+              className="hidden md:flex absolute inset-y-0 right-0 w-1/2 z-40 items-center justify-center bg-gradient-to-br from-rose-950 to-stone-900"
+            >
+              <motion.span
+                animate={{ opacity: opened ? 0 : 1 }}
+                transition={{ duration: 0.45, ease: DOOR_EASE }}
+                className="text-2xl sm:text-3xl font-bold text-white tracking-wide"
+              >
+                Nails
+              </motion.span>
+            </motion.div>
+
+            {/* Mobile door panels (vertical split) */}
+            <motion.div
+              initial={false}
+              animate={{ y: opened ? '-100%' : 0 }}
+              transition={{ duration: 0.9, ease: DOOR_EASE }}
+              aria-hidden="true"
+              className="flex md:hidden absolute inset-x-0 top-0 h-1/2 z-40 bg-gradient-to-br from-rose-950 to-stone-900"
+            />
+            <motion.div
+              initial={false}
+              animate={{ y: opened ? '100%' : 0 }}
+              transition={{ duration: 0.9, ease: DOOR_EASE }}
+              aria-hidden="true"
+              className="flex md:hidden absolute inset-x-0 bottom-0 h-1/2 z-40 bg-gradient-to-br from-rose-950 to-stone-900"
+            />
+            <motion.div
+              animate={{ opacity: opened ? 0 : 1 }}
+              transition={{ duration: 0.35, ease: DOOR_EASE }}
+              aria-hidden="true"
+              className="flex md:hidden absolute inset-0 z-40 items-center justify-center"
+            >
+              <span className="text-xl font-bold text-white tracking-wide">✦ Lumière Nails</span>
+            </motion.div>
+          </>
+        )}
+
         <div className="relative max-w-6xl mx-auto px-4 pt-28 pb-16 lg:pt-32 lg:pb-20">
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-10 lg:gap-16">
 
             {/* Left — text */}
             <div className="flex-1 min-w-0">
-              <motion.p {...fadeUp(0.05)} className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">
+              <motion.p {...fadeUp(heroDelays[0])} className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">
                 Преміальний салон манікюру
               </motion.p>
 
-              <motion.h1 {...fadeUp(0.15)} className="font-marck text-5xl sm:text-6xl lg:text-7xl text-stone-800 leading-[1.1] tracking-tight mb-5">
+              <motion.h1 {...fadeUp(heroDelays[1])} className="font-marck text-5xl sm:text-6xl lg:text-7xl text-stone-800 leading-[1.1] tracking-tight mb-5">
                 Манікюр, що{' '}
                 <span className="text-rose-500">говорить за вас</span>
               </motion.h1>
 
-              <motion.p {...fadeUp(0.25)} className="text-base sm:text-lg text-stone-500 leading-relaxed mb-8 max-w-lg">
+              <motion.p {...fadeUp(heroDelays[2])} className="text-base sm:text-lg text-stone-500 leading-relaxed mb-8 max-w-lg">
                 Манікюр, педикюр, нарощування та авторський дизайн нігтів у затишній студії
                 в центрі Києва. Доглянуті руки — це завжди про вас.
               </motion.p>
 
-              <motion.div {...fadeUp(0.35)} className="flex flex-col sm:flex-row gap-3">
+              <motion.div {...fadeUp(heroDelays[3])} className="flex flex-col sm:flex-row gap-3">
                 <button onClick={scrollToBookingForm} className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-rose-400 to-pink-500 text-white font-semibold shadow-xl shadow-rose-300/40 hover:shadow-rose-300/60 transition-all duration-300 hover:-translate-y-0.5">
                   Записатися онлайн
                 </button>
@@ -185,9 +279,12 @@ export function HomePage() {
 
             {/* Right — photo */}
             <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+              initial={hasPlayedIntro ? { opacity: 0, x: 40 } : { opacity: 1, scale: 1.08 }}
+              animate={hasPlayedIntro ? { opacity: 1, x: 0 } : { scale: opened ? 1 : 1.08 }}
+              transition={hasPlayedIntro
+                ? { delay: 0.2, duration: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }
+                : { duration: 1.4, ease: DOOR_EASE }
+              }
               className="flex-shrink-0 w-full lg:w-[460px]"
             >
               <div className="rounded-3xl overflow-hidden shadow-2xl shadow-rose-200/50 aspect-[4/5] lg:aspect-auto lg:h-96">
