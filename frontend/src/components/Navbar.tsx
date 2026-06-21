@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const links = [
@@ -29,7 +29,16 @@ const linkClass = (isActive: boolean) =>
 
 export function Navbar() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
+
+  const goToBooking = () => {
+    if (location.pathname === '/') {
+      document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      navigate('/#booking-form')
+    }
+  }
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur-md border-b border-rose-100">
@@ -63,7 +72,7 @@ export function Navbar() {
             {PHONE}
           </a>
           <button
-            onClick={() => navigate('/booking')}
+            onClick={goToBooking}
             className="px-5 py-2 rounded-xl bg-gradient-to-r from-rose-400 to-pink-500 text-white text-sm font-semibold shadow-lg shadow-rose-300/40 hover:shadow-rose-300/60 transition-shadow whitespace-nowrap"
           >
             Записатися онлайн
@@ -122,7 +131,7 @@ export function Navbar() {
               {PHONE}
             </a>
             <button
-              onClick={() => { navigate('/booking'); setMenuOpen(false) }}
+              onClick={() => { goToBooking(); setMenuOpen(false) }}
               className="mt-1 px-4 py-3 rounded-xl bg-gradient-to-r from-rose-400 to-pink-500 text-white text-sm font-semibold text-center"
             >
               Записатися онлайн

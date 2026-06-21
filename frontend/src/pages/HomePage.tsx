@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { SERVICE_IMAGES } from '../lib/serviceImages'
 
@@ -115,8 +115,37 @@ const REVIEWS_SHOWCASE = [
   { text: 'Після першого візиту стала постійною клієнткою. Рекомендую всім!', author: 'Катерина Л.' },
 ]
 
+const MASTER_OPTIONS = ['Будь-який', ...MASTERS.map((m) => m.name)]
+
+const TIME_SLOTS = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00']
+
+const FAQ_ITEMS = [
+  { q: 'Скільки тримається покриття?', a: 'Гель-лак тримається в середньому 3 тижні за умови дотримання рекомендацій по догляду.' },
+  { q: 'Чи стерилізуються інструменти?', a: 'Так, всі інструменти проходять повну дезінфекцію та стерилізацію в автоклаві після кожного клієнта.' },
+  { q: 'Чи можна записатися онлайн?', a: 'Звичайно! Просто заповніть форму запису на сайті, і ми зв\'яжемося з вами для підтвердження.' },
+  { q: 'Чи є парковка біля салону?', a: 'Так, біля входу є зручна парковка для відвідувачів.' },
+  { q: 'Які матеріали ви використовуєте?', a: 'Тільки сертифіковані гель-лаки та матеріали провідних світових брендів.' },
+  { q: 'Чи робите ви укріплення нігтів?', a: 'Так, пропонуємо укріплення біогелем та іншими сучасними технологіями.' },
+]
+
+const INPUT_CLASS = 'w-full px-4 py-2.5 rounded-xl border border-stone-200 text-sm text-stone-800 focus:outline-none focus:border-rose-300 focus:ring-2 focus:ring-rose-100 transition-colors'
+
+function scrollToBookingForm() {
+  document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })
+}
+
 export function HomePage() {
-  const navigate = useNavigate()
+  const [selectedService, setSelectedService] = useState('')
+  const [openFaqs, setOpenFaqs] = useState<Set<number>>(new Set())
+
+  const toggleFaq = (i: number) => {
+    setOpenFaqs((prev) => {
+      const next = new Set(prev)
+      if (next.has(i)) next.delete(i)
+      else next.add(i)
+      return next
+    })
+  }
 
   return (
     <div className="min-h-screen bg-rose-50 text-stone-800">
@@ -145,7 +174,7 @@ export function HomePage() {
               </motion.p>
 
               <motion.div {...fadeUp(0.35)} className="flex flex-col sm:flex-row gap-3">
-                <button onClick={() => navigate('/booking')} className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-rose-400 to-pink-500 text-white font-semibold shadow-xl shadow-rose-300/40 hover:shadow-rose-300/60 transition-all duration-300 hover:-translate-y-0.5">
+                <button onClick={scrollToBookingForm} className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-rose-400 to-pink-500 text-white font-semibold shadow-xl shadow-rose-300/40 hover:shadow-rose-300/60 transition-all duration-300 hover:-translate-y-0.5">
                   Записатися онлайн
                 </button>
                 <button onClick={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })} className="px-8 py-3.5 rounded-2xl bg-white border border-stone-200 text-stone-800 font-semibold hover:bg-rose-50 hover:border-rose-200 transition-all">
@@ -218,7 +247,10 @@ export function HomePage() {
                     <p className="text-base font-bold text-stone-800 whitespace-nowrap">{priceLabel}</p>
                     <p className="text-[11px] text-stone-400">{duration}</p>
                   </div>
-                  <button className="shrink-0 px-3 py-1.5 rounded-lg bg-gradient-to-r from-rose-400 to-pink-500 text-white text-xs font-semibold shadow-sm shadow-rose-300/40 hover:shadow-rose-300/60 transition-shadow whitespace-nowrap">
+                  <button
+                    onClick={() => { setSelectedService(label); scrollToBookingForm() }}
+                    className="shrink-0 px-3 py-1.5 rounded-lg bg-gradient-to-r from-rose-400 to-pink-500 text-white text-xs font-semibold shadow-sm shadow-rose-300/40 hover:shadow-rose-300/60 transition-shadow whitespace-nowrap"
+                  >
                     Записатись
                   </button>
                 </div>
@@ -372,25 +404,127 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ─── CTA ─── */}
-      <section className="py-20 lg:py-24">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <motion.h2 {...fadeUpInView()} className="text-3xl font-bold text-stone-800 mb-4">
-            Готові доглянути ваші руки?
-          </motion.h2>
-          <motion.div {...fadeUpInView(0.1)}>
-            <button onClick={() => navigate('/booking')} className="px-10 py-4 rounded-2xl bg-gradient-to-r from-rose-400 to-pink-500 text-white font-bold text-base shadow-2xl shadow-rose-300/40 hover:shadow-rose-300/60 hover:-translate-y-0.5 transition-all duration-300">
-              Записатись зараз
+      {/* ─── BOOKING FORM ─── */}
+      <section id="booking-form" className="py-20 lg:py-24 bg-white/60 scroll-mt-20">
+        <div className="max-w-3xl mx-auto px-4">
+          <motion.div {...fadeUpInView()} className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-stone-800 mb-3">Запишіться зараз</h2>
+            <p className="text-stone-500">Оберіть зручний час і ми підтвердимо запис</p>
+          </motion.div>
+
+          <motion.form
+            {...fadeUpInView(0.1)}
+            onSubmit={(e) => e.preventDefault()}
+            className="bg-white rounded-3xl shadow-xl shadow-rose-100/60 p-6 sm:p-8"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+              <div>
+                <label className="block text-xs font-semibold text-stone-500 mb-1.5">Ваше ім'я</label>
+                <input type="text" placeholder="Ім'я" className={INPUT_CLASS} />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-stone-500 mb-1.5">Телефон</label>
+                <input type="tel" placeholder="+380 __ ___ __ __" className={INPUT_CLASS} />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-stone-500 mb-1.5">Послуга</label>
+                <select value={selectedService} onChange={(e) => setSelectedService(e.target.value)} className={INPUT_CLASS}>
+                  <option value="">Оберіть послугу</option>
+                  {SERVICE_CARDS.map(({ serviceId, label }) => (
+                    <option key={serviceId} value={label}>{label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-stone-500 mb-1.5">Майстер</label>
+                <select className={INPUT_CLASS}>
+                  {MASTER_OPTIONS.map((name) => (
+                    <option key={name}>{name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-stone-500 mb-1.5">Дата</label>
+                <input type="date" className={INPUT_CLASS} />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-stone-500 mb-1.5">Час</label>
+                <select className={INPUT_CLASS}>
+                  {TIME_SLOTS.map((t) => (
+                    <option key={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" className="w-full px-8 py-3.5 rounded-2xl bg-gradient-to-r from-rose-400 to-pink-500 text-white font-semibold shadow-xl shadow-rose-300/40 hover:shadow-rose-300/60 transition-all duration-300">
+              Записатись
             </button>
+          </motion.form>
+        </div>
+      </section>
+
+      {/* ─── INSTAGRAM ─── */}
+      <section className="py-20 lg:py-24">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div {...fadeUpInView()} className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-stone-800 mb-3">Ми в Instagram</h2>
+            <p className="text-stone-500">
+              Підписуйтесь на нас <span className="text-rose-500 font-semibold">@lumiere.nails</span>
+            </p>
           </motion.div>
-          <motion.div {...fadeUpInView(0.2)} className="flex items-center justify-center gap-4 mt-8">
-            <a href="#" aria-label="Instagram" className="w-11 h-11 flex items-center justify-center rounded-full bg-white border border-rose-100 text-rose-500 hover:bg-rose-50 transition-colors">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-            </a>
-            <a href="#" aria-label="Telegram" className="w-11 h-11 flex items-center justify-center rounded-full bg-white border border-rose-100 text-rose-500 hover:bg-rose-50 transition-colors">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M21.5 4.5 2.5 11.8c-1 .4-1 1.5 0 1.8l4.8 1.5L18 8.2c.4-.3.9.1.5.4l-8.6 7.8v.1l-.3 4.2c.5 0 .7-.2 1-.5l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8l3.1-14.5c.3-1.2-.5-1.8-1.3-1.5z"/></svg>
-            </a>
+
+          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+            {GALLERY_IMAGES.map((src, i) => (
+              <motion.div key={src} {...fadeUpInView(i * 0.04)} className="shrink-0 w-[160px] sm:w-[180px] aspect-square rounded-2xl overflow-hidden">
+                <img
+                  src={src}
+                  alt={`Instagram-публікація Lumière Nails ${i + 1}`}
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FAQ ─── */}
+      <section className="py-20 lg:py-24 bg-white/60">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div {...fadeUpInView()} className="flex items-center gap-4 mb-10">
+            <span className="w-1 h-8 rounded-full bg-gradient-to-b from-rose-400 to-pink-500 shrink-0" />
+            <h2 className="text-3xl font-bold text-stone-800">Часті запитання</h2>
           </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 items-start gap-4">
+            {FAQ_ITEMS.map(({ q, a }, i) => {
+              const isOpen = openFaqs.has(i)
+              return (
+                <motion.div key={q} {...fadeUpInView(i * 0.05)} className="bg-white rounded-2xl shadow-md shadow-rose-100/50 p-5">
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    onClick={() => toggleFaq(i)}
+                    className="w-full flex items-center justify-between gap-3 text-left cursor-pointer font-semibold text-stone-800 text-sm"
+                  >
+                    {q}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`shrink-0 text-rose-500 transition-transform duration-300 ease-out ${isOpen ? 'rotate-45' : ''}`}>
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                  </button>
+                  <div
+                    className="grid transition-[grid-template-rows] duration-300 ease-out"
+                    style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
+                  >
+                    <div className="overflow-hidden">
+                      <p className="text-sm text-stone-500 leading-relaxed pt-3">{a}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
         </div>
       </section>
     </div>
