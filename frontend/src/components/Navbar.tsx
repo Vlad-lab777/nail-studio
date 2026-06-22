@@ -121,7 +121,8 @@ export function Navbar() {
 
   const effectiveActiveHash = location.pathname === '/' ? activeHash : null
 
-  const goToSection = (hash: string) => {
+  // hash === null means "go home" (scroll to top, no section)
+  const goToSection = (hash: string | null) => {
     // jump the pill straight to the clicked item and lock out the scroll-spy
     // for the duration of the smooth scroll, so it can't override this choice
     // with whatever section happens to pass through the viewport along the way
@@ -141,13 +142,30 @@ export function Navbar() {
     suppressTimer.current = window.setTimeout(release, 1500)
 
     if (location.pathname === '/') {
-      document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth' })
+      // on hash-section pages the URL never actually carries the hash (see
+      // below), so navigating to "/" while already on "/" is a router no-op —
+      // home must scroll manually instead of relying on a route change
+      if (hash) {
+        document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth' })
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }
     } else {
-      navigate(`/${hash}`)
+      navigate(hash ? `/${hash}` : '/')
     }
   }
 
+  const goHome = () => goToSection(null)
   const goToBooking = () => goToSection('#booking-form')
+
+  // Home's NavLink already navigates correctly from /services or /reviews
+  // (pathname actually changes there); only intercept the case where we're
+  // already on "/" and a router navigation to "/" would be a no-op
+  const handleHomeClick = (e: { preventDefault: () => void }) => {
+    if (location.pathname !== '/') return
+    e.preventDefault()
+    goHome()
+  }
 
   // "Головна" matches "/" exactly the same as any hash section does (both only
   // apply while pathname === '/'), so it must also yield to whichever section
@@ -165,13 +183,19 @@ export function Navbar() {
         </NavLink>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-0.5 flex-1 min-w-0 overflow-x-auto">
+        {/* overflow-y-hidden: setting only overflow-x forces overflow-y to compute
+            as "auto" too (CSS rule for mismatched axes), so the pill's spring
+            transform — which can briefly overshoot during its FLIP animation —
+            registers as scrollable overflow and pops a vertical scrollbar at
+            the nav's right edge, right where the phone number sits */}
+        <nav className="hidden md:flex items-center gap-0.5 flex-1 min-w-0 overflow-x-auto overflow-y-hidden">
           {links.map((l) =>
             'to' in l ? (
               <NavLink
                 key={l.label}
                 to={l.to}
                 end={l.exact}
+                onClick={l.to === '/' ? handleHomeClick : undefined}
                 className="relative px-2.5 py-2 rounded-xl text-[13px] font-medium whitespace-nowrap transition-colors text-stone-500 hover:text-stone-800 hover:bg-rose-50/60"
               >
                 {({ isActive }) => <PillLabel active={isHomeLinkActive(isActive, l.to)} label={l.label} />}
@@ -234,7 +258,7 @@ export function Navbar() {
                   key={l.label}
                   to={l.to}
                   end={l.exact}
-                  onClick={() => setMenuOpen(false)}
+                  onClick={(e) => { if (l.to === '/') handleHomeClick(e); setMenuOpen(false) }}
                   className={({ isActive }) =>
                     `px-4 py-3 rounded-xl text-sm font-medium transition-colors ${isHomeLinkActive(isActive, l.to) ? 'text-rose-600 bg-rose-50' : 'text-stone-500 hover:text-stone-800 hover:bg-rose-50/60'}`
                   }
