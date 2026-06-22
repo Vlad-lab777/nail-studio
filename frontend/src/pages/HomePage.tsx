@@ -380,7 +380,7 @@ export function HomePage() {
       </section>
 
       {/* ─── MASTERS ─── */}
-      <section className="py-20 lg:py-24 bg-white/60">
+      <section id="team" className="py-20 lg:py-24 bg-white/60 scroll-mt-20">
         <div className="max-w-6xl mx-auto px-4">
           <motion.div {...fadeUpInView()} className="flex items-center gap-4 mb-10">
             <span className="w-1 h-8 rounded-full bg-gradient-to-b from-rose-400 to-pink-500 shrink-0" />
@@ -406,7 +406,7 @@ export function HomePage() {
       </section>
 
       {/* ─── PROMOTIONS ─── */}
-      <section className="py-20 lg:py-24">
+      <section id="promotions" className="py-20 lg:py-24 scroll-mt-20">
         <div className="max-w-6xl mx-auto px-4">
           <motion.div {...fadeUpInView()} className="flex items-center gap-4 mb-10">
             <span className="w-1 h-8 rounded-full bg-gradient-to-b from-rose-400 to-pink-500 shrink-0" />
@@ -433,7 +433,7 @@ export function HomePage() {
       </section>
 
       {/* ─── ABOUT SALON ─── */}
-      <section className="py-20 lg:py-24 bg-white/60">
+      <section id="about" className="py-20 lg:py-24 bg-white/60 scroll-mt-20">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-10 lg:gap-16">
 
